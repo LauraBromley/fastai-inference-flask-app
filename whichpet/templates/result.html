@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <div class="row result-row">
+        {% for result in results %}
+        <div class="col-sm result-item">
+            <h4>{{result.info}}</h4>
+            <div class="image-container">
+                <img src="{{test_image_path}}\{{result.filename}}">
+            </div>
+            <div>
+                <h4 class="{{result.category}}">Result: {{ result.display_category }} </h4>
+                <h4>How confident are we? {{ result.percentage }}% </h4>
+            </div>
+            <div class="progress">
+                <div class="progress-bar {{result.category}}_progress" role="progressbar" style="width: {{result.percentage}}%" aria-valuenow="{{result.percentage}}" aria-valuemin="0" aria-valuemax="100">{{result.percentage}}%</div>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="link-btn">
+        <a href="{{url_for('index')}}" class="btn btn-info"> Try another image</a>
+    </div>
+    
+
+{% endblock %}
