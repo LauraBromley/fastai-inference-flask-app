@@ -1,6 +1,8 @@
 from fastai.vision import load_learner, open_image, Learner
 from whichpet.images import rotate_image_by_exif, crop_image, resize_image
+from operator import attrgetter
 import os
+
 
 # Class to hold the result of the inference
 class Result:
@@ -58,25 +60,25 @@ def run_model(learn, image_path, info):
 # We do some image manipulation here
 def do_inference(learn, image_path):
 
-  # initialise the results
-  results = []
-
-  # Run on original image
-  r1 = run_model(learn, image_path, "Original image")
-  results.append(r1)
-
   # Photos can be in the incorrect orientation
   rotated_path = rotate_image_by_exif(image_path, "rotated")
-  if rotated_path != "":
-    r2 = run_model(learn, rotated_path, "Rotated to correct orientation")
-    results.append(r2)
+  is_rotated = rotated_path != ""
+  if is_rotated:
+    image_path = rotated_path
+    info = "Rotated to correct orientation"
+  else:
+    info = "Original image"
+
+  # Run on original image
+  r1 = run_model(learn, image_path, info)
 
   # Try cropping the image by 10% to see if we get a better result
-  cropped_path = crop_image(image_path, 0.10, "_cropped_10")
-  r3 = run_model(learn, cropped_path, "Cropped by 10%")
-  results.append(r3)
+  path_to_crop = image_path
+  cropped_path = crop_image(path_to_crop, 0.10, "_cropped_10")
+  r2 = run_model(learn, cropped_path, info +", cropped by 10%")
 
-  return results
+  # Get the best result
+  best_result = r2 if r2.percentage > r1.percentage else r1
 
-
-#def saveResults(user_feedback): TODO
+  # Return result
+  return best_result

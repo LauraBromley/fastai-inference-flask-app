@@ -12,8 +12,9 @@ def create_app(test_config=None):
     # load the config (testing?)
     app.config.update(
         APP_NAME = 'whichpet',
-        UPLOAD_FOLDER = 'test_images',
-        SAMPLE_IMAGES_FOLDER = 'sample_images',
+        IMAGES_FOLDER = 'images',
+        UPLOAD_FOLDER = 'test',
+        SAMPLE_FOLDER = 'sample',
         MODEL_FOLDER = 'models',
         STATIC_PREFIX_PATH = 'static',
         ALLOWED_IMAGE_FORMATS = ['jpg', 'jpeg'],
@@ -27,10 +28,13 @@ def create_app(test_config=None):
     learn = init_model(model_path)
 
     # initialise upload path
-    upload_path = root_path.joinpath(app.config['STATIC_PREFIX_PATH'], app.config['UPLOAD_FOLDER'])
+    upload_path = root_path.joinpath(app.config['STATIC_PREFIX_PATH'], app.config['IMAGES_FOLDER'], app.config['UPLOAD_FOLDER'])
 
-    # image src path for template
-    test_image_path = str(upload_path).replace(str(root_path), '')
+    # image src path for template (starting from /static/...)
+    test_image_path = os.path.join(app.config['STATIC_PREFIX_PATH'], app.config['IMAGES_FOLDER'], app.config['UPLOAD_FOLDER'])
+
+    # sample image src path for template (starting from /static/...)
+    sample_image_path = os.path.join(app.config['STATIC_PREFIX_PATH'], app.config['IMAGES_FOLDER'], app.config['SAMPLE_FOLDER'])
 
     # Home page and starting point
     @app.route('/')
@@ -54,7 +58,7 @@ def create_app(test_config=None):
     # Page that displays the results
     @app.route('/results')
     def results(result):
-        return render_template('result.html', results=result, test_image_path=test_image_path)
+        return render_template('result.html', result=result, test_image_path=test_image_path, sample_image_path=sample_image_path)
 
     return app
     

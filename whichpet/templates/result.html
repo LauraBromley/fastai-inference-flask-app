@@ -1,28 +1,41 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<!-- set the color of the progress bar based on the percentage -->
+{% if result.percentage > 60 %}
+{%  set progress_class = "bg-success" %}
+{% elif result.percentage < 30 %}
+{%  set progress_class = "bg-danger" %}
+{% else %}
+{%  set progress_class = "bg-warning" %}
+{% endif %}
+
+<div class="container-box">
+    <h3>Prediction: {{result.display_category}}</h3>
     <div class="row result-row">
-        {% for result in results %}
-        <div class="col-sm result-item">
-            <h4>{{result.info}}</h4>
+        <div class="col-sm">
             <div class="image-container">
                 <img src="{{test_image_path}}\{{result.filename}}">
             </div>
-            <div>
-                <h4 class="{{result.category}}">Result: {{ result.display_category }} </h4>
-                <h4>How confident are we? {{ result.percentage }}% </h4>
-            </div>
-            <div class="progress">
-                <div class="progress-bar {{result.category}}_progress" role="progressbar" style="width: {{result.percentage}}%" aria-valuenow="{{result.percentage}}" aria-valuemin="0" aria-valuemax="100">{{result.percentage}}%</div>
-            </div>
-            
+            <p class="caption">{{ result.info }}</p>
         </div>
-        {% endfor %}
+        <div class="col-sm">
+            <div class="image-container">
+                <img src="{{sample_image_path}}\{{result.category}}.jpg">
+            </div>
+            <p class="caption">{{ result.display_category }}</p>
+        </div>
     </div>
-
+    <div>
+        <h4>How confident are we? {{ result.percentage }}% </h4>
+    </div>
+    <div class="progress">
+        <div class="progress-bar {{progress_class}}" role="progressbar" style="width: {{result.percentage}}%" aria-valuenow="{{result.percentage}}" aria-valuemin="0" aria-valuemax="100">{{result.percentage}}%</div>
+    </div>
+            
     <div class="link-btn">
-        <a href="{{url_for('index')}}" class="btn btn-info"> Try another image</a>
+        <a href="{{url_for('index')}}" class="btn btn-info btn-lg"> Try another image</a>
     </div>
-    
+</div>
 
 {% endblock %}

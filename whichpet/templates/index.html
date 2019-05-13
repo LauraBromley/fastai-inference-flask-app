@@ -1,17 +1,20 @@
 {% extends "layout.html" %}
 {% block body %}
     <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-        <div id="step-1">
-            <h1>Select an image or take a photo </h1>
-            <label class="btn btn-info">
-                Choose Image <input type="file" name="file" id="image-file" accept="image/jpeg" style="display: none;">
-            </label>
-        </div>
-        <div id="step-2">
-            <div class="image-container">
-                <img id="chosen-image" src="#">
+        <div class="container-box">
+            <div id="step-1">
+                <h1>Select an image or take a photo </h1>
+                <p>Choose an image of a dog or cat, and we will try and identify the breed.</p>
+                <label class="btn btn-info btn-lg">
+                    Choose Image <input type="file" name="file" id="image-file" accept="image/jpeg" style="display: none;">
+                </label>
             </div>
-            <button id="do-submit" type="submit" class="btn btn-info">Go!</button>
+            <div id="step-2">
+                <div class="image-container">
+                    <img id="chosen-image" src="#">
+                </div>
+                <button id="do-submit" type="submit" class="btn btn-info btn-lg">Go!</button>
+            </div>
         </div>
     </form>
     

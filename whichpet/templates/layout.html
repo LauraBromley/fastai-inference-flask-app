@@ -6,11 +6,13 @@
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/styles.css') }}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-<div class=container-fluid>
+<div class=container>
   <div class="header">
-      <!-- <h1>How Fluffy Is It?</h1> -->
-      <h1>Which pet?</h1>
+      <h1>Which Pet?</h1>
   </div>
+  <p>This app is using deep learning to try to recognise breeds of dogs and cats. 
+    The training data set and sample images are taken from the <a href="https://www.robots.ox.ac.uk/~vgg/data/pets/">Oxford-IIIT Pet Dataset</a>, 
+    and the model was trained using the <a href="https://www.fast.ai/">fast.ai library</a>.</p>
   
   {% for message in get_flashed_messages() %}
     <div class=flash>{{ message }}</div>
