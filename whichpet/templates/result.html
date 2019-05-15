@@ -2,36 +2,50 @@
 {% block body %}
 
 <!-- set the color of the progress bar based on the percentage -->
-{% if result.percentage > 60 %}
+{% if result.prediction.percentage > 60 %}
 {%  set progress_class = "bg-success" %}
-{% elif result.percentage < 30 %}
+{% elif result.prediction.percentage < 30 %}
 {%  set progress_class = "bg-danger" %}
 {% else %}
 {%  set progress_class = "bg-warning" %}
 {% endif %}
 
+
 <div class="container-box">
-    <h3>Prediction: {{result.display_category}}</h3>
+    <h3>Prediction: {{result.prediction.display_category}}</h3>
     <div class="row result-row">
         <div class="col-sm">
             <div class="image-container">
-                <img src="{{test_image_path}}\{{result.filename}}">
+                <img src="{{page_info.test_image_path}}\{{result.filename}}">
             </div>
             <p class="caption">{{ result.info }}</p>
         </div>
         <div class="col-sm">
             <div class="image-container">
-                <img src="{{sample_image_path}}\{{result.category}}.jpg">
+                <img src="{{page_info.sample_image_path}}\{{result.prediction.category}}.jpg">
             </div>
-            <p class="caption">{{ result.display_category }}</p>
+            <p class="caption">{{ result.prediction.display_category }}</p>
         </div>
     </div>
     <div>
-        <h4>How confident are we? {{ result.percentage }}% </h4>
+        <h4>How confident are we? {{ result.prediction.percentage }}% </h4>
     </div>
     <div class="progress">
-        <div class="progress-bar {{progress_class}}" role="progressbar" style="width: {{result.percentage}}%" aria-valuenow="{{result.percentage}}" aria-valuemin="0" aria-valuemax="100">{{result.percentage}}%</div>
+        <div class="progress-bar {{progress_class}}" role="progressbar" 
+            style="width: {{result.prediction.percentage}}%" aria-valuenow="{{result.prediction.percentage}}" 
+            aria-valuemin="0" aria-valuemax="100">{{result.prediction.percentage}}%</div>
     </div>
+
+    {% if result.other_predictions |length %}
+    <div class="other-preds alert alert-info">
+        <p>Other Predictions:</p>
+        <ul>
+        {% for other in result.other_predictions %}
+            <li>{{other.display_category}}: {{other.percentage}}%</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
             
     <div class="link-btn">
         <a href="{{url_for('index')}}" class="btn btn-info btn-lg"> Try another image</a>

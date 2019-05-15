@@ -6,14 +6,18 @@ import os
 
 # Class to hold the result of the inference
 class Result:
-  def __init__(self, path, filename, category, display_category, percentage, info):
+  def __init__(self, path, filename, info, prediction, other_predictions):
     self.path = path
     self.filename = filename
+    self.info = info
+    self.prediction = prediction
+    self.other_predictions = other_predictions
+
+class Prediction:
+  def __init__(self, category, display_category, percentage):
     self.category = category
     self.display_category = display_category
     self.percentage = percentage
-    self.info = info
-
 
 # Load the trained model (only do this once) from the pkl file
 def init_model(model_path):
@@ -35,25 +39,39 @@ def run_model(learn, image_path, info):
   image = open_image(image_path)
 
   # Run the prediction
-  pred_class, __, outputs = learn.predict(image)
+  __, __, outputs = learn.predict(image)
 
-  # Convert the pred_class to a string category
-  category = str(pred_class)
+  # Convert the results to a list of predictions
+  predictions = convert_to_predictions(outputs, learn.data.classes)
+  prediction = predictions[0]
 
-  # Get the percentage confidence (as an integer eg 97%)
-  category_index = learn.data.classes.index(category)
-  confidence = round(outputs[category_index].item()  * 100)
-
-  # Get the friendly category name to display
-  display_category = friendly_class_name(category)
+  if len(predictions) == 1:
+    other_predictions = []
+  else:
+    del predictions[0] 
+    other_predictions = predictions
 
   # Get just the filename from the path
-  head, filename  = os.path.split(image_path)
+  __, filename  = os.path.split(image_path)
 
   # copy to a result object
-  r = Result(image_path, filename, category, display_category, confidence, info)
+  r = Result(image_path, filename, info, prediction, other_predictions)
 
   return r
+
+# Convert the results to a list of Predictions
+# where the rounded up percentage > 0 
+# (ie 0.66 --> 66% but 0.00006 => 0%)
+def convert_to_predictions(outputs, classes):
+    predictions = []
+    for idx, category in enumerate(classes):
+      percentage = round(outputs[idx].item()  * 100)
+      if percentage > 0:
+        display_category = friendly_class_name(category)
+        pred = Prediction(category, display_category, percentage)
+        predictions.append(pred) 
+    predictions.sort(key=lambda x: x.percentage, reverse=True)
+    return predictions
 
 
 # Calling point to run the prediction on a given image
@@ -78,7 +96,7 @@ def do_inference(learn, image_path):
   r2 = run_model(learn, cropped_path, info +", cropped by 10%")
 
   # Get the best result
-  best_result = r2 if r2.percentage > r1.percentage else r1
+  best_result = r2 if r2.prediction.percentage > r1.prediction.percentage else r1
 
   # Return result
   return best_result

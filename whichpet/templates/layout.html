@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Pet Classifier Inference</title>
+<title>{{page_info.title}}</title>
 <script type=text/javascript src="{{url_for('static', filename='js/lib/jquery_341.js') }}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/inference.js') }}"></script>
 
@@ -8,14 +8,14 @@
 
 <div class=container>
   <div class="header">
-      <h1>Which Pet?</h1>
+      <h1>{{page_info.heading}}</h1>
   </div>
-  <p>This app is using deep learning to try to recognise breeds of dogs and cats. 
-    The training data set and sample images are taken from the <a href="https://www.robots.ox.ac.uk/~vgg/data/pets/">Oxford-IIIT Pet Dataset</a>, 
-    and the model was trained using the <a href="https://www.fast.ai/">fast.ai library</a>.</p>
+  <p>{{page_info.introduction | safe}} </p>
   
   {% for message in get_flashed_messages() %}
     <div class=flash>{{ message }}</div>
   {% endfor %}
   {% block body %}{% endblock %}
 </div>
+
+
